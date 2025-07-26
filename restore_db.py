@@ -10,7 +10,9 @@ class GenericDBRestore:
         self.DB_USER = args.db_user
         self.DB_PASSWORD = args.db_password
         self.DB_HOST = args.db_host
-        self.DB_PORT = args.db_port or ("5432" if self.DB_TYPE == "postgres" else "3306")
+        self.DB_PORT = args.db_port or (
+            "5432" if self.DB_TYPE == "postgres" else "3306"
+        )
         self.SQL_FILE = args.sql_file
 
         if not os.path.exists(self.SQL_FILE):
@@ -21,13 +23,13 @@ class GenericDBRestore:
             return (
                 f"PGPASSWORD='{self.DB_PASSWORD}' psql "
                 f"-U {self.DB_USER} -h {self.DB_HOST} -p {self.DB_PORT} "
-                f"-c \"CREATE DATABASE {self.DB_NAME};\""
+                f'-c "CREATE DATABASE {self.DB_NAME};"'
             )
         elif self.DB_TYPE == "mysql":
             return (
                 f"mysql -u {self.DB_USER} -p'{self.DB_PASSWORD}' "
                 f"-h {self.DB_HOST} -P {self.DB_PORT} "
-                f"-e \"CREATE DATABASE IF NOT EXISTS {self.DB_NAME};\""
+                f'-e "CREATE DATABASE IF NOT EXISTS {self.DB_NAME};"'
             )
 
     def _restore_command(self):
@@ -60,14 +62,24 @@ class GenericDBRestore:
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Generic DB Restore Script (MySQL & PostgreSQL)")
-    parser.add_argument("--db-type", required=True, choices=["postgres", "mysql"], help="Database type")
+    parser = argparse.ArgumentParser(
+        description="Generic DB Restore Script (MySQL & PostgreSQL)"
+    )
+    parser.add_argument(
+        "--db-type", required=True, choices=["postgres", "mysql"], help="Database type"
+    )
     parser.add_argument("--db-name", required=True, help="Database name")
     parser.add_argument("--db-user", required=True, help="Database user")
     parser.add_argument("--db-password", required=True, help="Database password")
-    parser.add_argument("--db-host", default="localhost", help="Database host (default: localhost)")
-    parser.add_argument("--db-port", help="Database port (default: 5432 for Postgres, 3306 for MySQL)")
-    parser.add_argument("--sql-file", required=True, help="Path to the .sql file to restore")
+    parser.add_argument(
+        "--db-host", default="localhost", help="Database host (default: localhost)"
+    )
+    parser.add_argument(
+        "--db-port", help="Database port (default: 5432 for Postgres, 3306 for MySQL)"
+    )
+    parser.add_argument(
+        "--sql-file", required=True, help="Path to the .sql file to restore"
+    )
     return parser.parse_args()
 
 
